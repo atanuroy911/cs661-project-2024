@@ -158,6 +158,7 @@ cython_debug/
 
 hello.png
 test.py
+Testing/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
