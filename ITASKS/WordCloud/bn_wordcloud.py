@@ -13,6 +13,9 @@ import os
 from IPython.display import clear_output
 import zipfile
 import sys
+import locale
+
+locale.setlocale(locale.LC_ALL, '')
 
 punctuations = corpus.BengaliCorpus.punctuations
 stopwords = _stopwords.bengali_stopwords
@@ -36,11 +39,15 @@ def generate_wordcloud(singer):
 	path = os.path.join(path, 'Dataset')
 	path = os.path.join(path, 'Data')
 	path = os.path.join(path, singer)
+	print(path)
 	lyrics = ''
 	for song in os.listdir(path):
 		tmp = os.path.join(path, song)
 		try:
 			lyrics += docx2txt.process(tmp)
+			# save lyris to a file
+			with open('lyrics.txt', 'w') as f:
+				f.write(lyrics)
 		except zipfile.BadZipFile:
 			pass
 
