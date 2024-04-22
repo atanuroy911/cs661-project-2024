@@ -1,6 +1,7 @@
 import os
 import csv
 import json
+import docx2txt
 
 # Function to get list of all song files
 def get_song_files(directory):
@@ -18,10 +19,17 @@ def extract_song_data(file_path):
     song_name = os.path.splitext(file_name)[0].split("_", 1)[1]  # Extract song name after first underscore
     return author, song_name, file_name, file_path
 
-# Function to extract lyrics from song file
+import docx2txt
+
+# Function to extract lyrics from song file using docx2txt
 def extract_lyrics(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+    try:
+        text = docx2txt.process(file_path)
+        return text
+    except Exception as e:
+        print(f"Error occurred while extracting text from {file_path}: {e}")
+        return ""
+
 
 # Function to write song data to CSV
 def write_to_csv(song_data, output_file):
@@ -35,15 +43,20 @@ def generate_json(song_data, output_json):
     json_data = []
     for author, song_name, _, file_path in song_data:
         lyrics = extract_lyrics(file_path)
-        json_data.append({"Lyricist": author, "Song Name": song_name, "Lyrics": lyrics})
+        # Check if song name and lyrics are not empty
+        if song_name.strip() and lyrics.strip():
+            json_data.append({"Lyricist": author, "Song Name": song_name, "Lyrics": lyrics})
     with open(output_json, 'w', encoding='utf-8') as json_file:
         json.dump(json_data, json_file, ensure_ascii=False, indent=4)
+
+
+
 
 # Main function
 def main():
     input_directory = "Data"
     output_csv = "SongList.csv"
-    output_json = "SongLyrics.json"
+    output_json = "SongDB.json"
 
     # Get list of all song files
     song_files = get_song_files(input_directory)

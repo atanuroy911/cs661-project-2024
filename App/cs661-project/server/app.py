@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file
-from bnwordcloud.bn_wordcloud import generate_wordcloud
+from bnwordcloud.bn_wordcloud import main
 
 app = Flask(__name__)
 
@@ -11,9 +11,11 @@ def generate_word_cloud():
     
     # Call the generate_wordcloud function from wordcloud.py
     try:
-        generate_wordcloud(singer)
+        result = main(singer)
         # Assuming the word cloud is saved as "Bengali_word_cloud.png"
-        return send_file("Bengali_word_cloud.png", mimetype='image/png')
+        print(result)
+        return send_file(result, mimetype='image/png')
+        # return result
     except Exception as e:
         return f"Error: {str(e)}", 500
 
