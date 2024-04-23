@@ -2,10 +2,10 @@
 import {
   LucideIcon,
   LayoutDashboard,
-  BadgeDollarSign,
   CircleUserRound,
   Settings,
   WalletCards,
+  BadgePercent
 } from "lucide-react";
 import SidebarItem from "./item";
 
@@ -29,8 +29,8 @@ const items: ISidebarItem[] = [
   },
   {
     name: "Song Similarity",
-    path: "/transaction",
-    icon: BadgeDollarSign,
+    path: "/similarity",
+    icon: BadgePercent,
   },
   {
     name: "Payment",

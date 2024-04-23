@@ -1,0 +1,29 @@
+.mainContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 10px;
+}
+
+.matrixPane {
+    flex: none;
+}
+.matrixdiv{
+    width: 400px;
+    height: 400px;
+}
+
+.mainContainerMobile {
+
+}
+
+.react-resizable-handle {
+    bottom: -20px !important;
+    right: -20px !important;
+    background-size: 10px !important;
+    background-position: top left !important;
+}
+
+.lyricsPane {
+    flex: 1 1 auto;
+}

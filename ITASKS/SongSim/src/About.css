@@ -1,0 +1,18 @@
+.abtPanel {
+    margin-top: 40px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    border-style: solid;
+    background-color: rgb(252, 253, 255);
+    border-color: rgb(220, 240, 255);
+}
+
+
+.chapter-advanced img {
+    border: 1px solid hsl(0, 0%, 75%);
+}
+
+.abtPanel img {
+    margin-bottom: 15px;
+}

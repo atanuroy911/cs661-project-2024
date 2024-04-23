@@ -1,0 +1,21 @@
+.lyricsPane {
+    margin-right: 2%;
+    margin-left: 2%;
+    text-align: center;
+}
+
+textarea {
+    width: 90%;
+}
+
+.lyrics {
+    background-color: rgb(255, 255, 245);
+    border-style: solid;
+    border-color: rgb(240, 240, 255);
+    min-height: 25vh;
+    column-width: 15em;
+}
+
+.line {
+    min-height: .6em;
+}
