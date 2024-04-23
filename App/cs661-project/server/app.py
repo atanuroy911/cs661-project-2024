@@ -39,5 +39,27 @@ def send_data():
         data = json.load(file)
     return jsonify(data)
 
+@app.route('/lyrics', methods=['GET'])
+@cross_origin()
+def send_lyrics():
+    author = request.args.get('author')  # Get the singer name from the query parameters
+    song = request.args.get('song')  # Get the song name from the query parameters
+
+    with open('SongDB.json', 'r') as file:
+        data = json.load(file)
+
+    if not author:
+        return "Error: Author name is required.", 400
+    if not song:
+        return "Error: Song name is required.", 400
+    
+    if author in data:
+        for song_entry in data[author]:
+            if song_entry["Song Name"] == song:
+                return jsonify({"lyrics": song_entry["Lyrics"]})
+        return jsonify({"error": "Song not found for the provided author"}), 404
+    else:
+        return jsonify({"error": "Author not found"}), 404
+
 if __name__ == '__main__':
     app.run(debug=True)

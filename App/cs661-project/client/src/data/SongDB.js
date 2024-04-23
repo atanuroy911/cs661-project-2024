@@ -1,4 +1,4 @@
-{
+const SONGDATA = {
     "Abdul Alim": [
         {
             "Song Name": "আর কতকাল ভাসবো আমি",
@@ -11680,3 +11680,5 @@
         }
     ]
 }
+
+export {SONGDATA}

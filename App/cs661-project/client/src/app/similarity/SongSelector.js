@@ -1,37 +1,79 @@
-'use client'
-import React, { Component } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import './SongSelector.css';
-  
-class SongSelector extends Component {
+import { SONGTABLE } from '@/data/SongDBL';
+import axios from 'axios';
+
+const SongSelector = ({ updateLyrics }) => {
+  const [selectedAuthor, setSelectedAuthor] = useState('');
+  const [selectedSong, setSelectedSong] = useState('');
+  const [lyrics, setLyrics] = useState('');
+
+  const handleGenerate = () => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:5000/lyrics?author=${selectedAuthor}&song=${selectedSong}`);
+        setLyrics(response.data);
+        console.log(lyrics?.lyrics);
+        if (lyrics) {
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData().then(() => {
+      updateLyrics(lyrics?.lyrics);
+
+    });
+  };
 
 
-  render() {
-    // Apply some different effects to the button next to the dropdown depending
-    // on whether we're talking about editing an existing custom song, or starting
-    // a new one.
-    var is_edit = true;
-    var glyph = is_edit ? 'pencil' : 'plus';
-    var cust_title = is_edit ? 'Edit song' : 'New song';
-    return (
-            <div className="form-horizontal songselector">
-              <div className="form-group">
-              <div className="col-xs-11">
-              </div>
-              {this.props.allowEdit &&
-              <span className="col-xs-1 input-lg">
-                <button className="btn" onClick={this.props.onEdit}
-                  title={cust_title}
-                >
-                  <span className={"glyphicon glyphicon-" + glyph} />
-                </button>
-              </span>
-              }
-              </div>
+
+  return (
+    <div className="form-horizontal songselector">
+      <div className="form-group">
+        <div className="col-xs-11">
+          <select
+            className="block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md"
+            onChange={(e) => setSelectedAuthor(e.target.value)}
+          >
+            <option value="">Select Lyricist</option>
+            {Object.keys(SONGTABLE).map((author) => (
+              <option key={author} value={author}>
+                {author}
+              </option>
+            ))}
+          </select>
+
+          {selectedAuthor && (
+            <div>
+              <select
+                className="block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md"
+                onChange={(e) => setSelectedSong(e.target.value)}
+                disabled={!selectedAuthor}
+              >
+                <option value="">Select Song</option>
+                {selectedAuthor &&
+                  SONGTABLE[selectedAuthor].map((song) => (
+                    <option key={song} value={song}>
+                      {song}
+                    </option>
+                  ))}
+              </select>
+              <button
+                className="py-2 px-4 bg-blue-500 text-white rounded-md"
+                onClick={handleGenerate}
+                disabled={!selectedAuthor || !selectedSong}
+              >
+                Generate
+              </button>
             </div>
-        );
-  }
-}
-
+          )}
+          <br />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default SongSelector;

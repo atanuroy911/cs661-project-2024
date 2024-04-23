@@ -142,9 +142,6 @@ class Songsim extends Component {
 
   onTextChange = (verse) => {
     let state = {verse: verse};
-    if (verse.isCustom() && this.state.mode === MODE.color_title) {
-        state['mode'] = config.default_mode;
-    }
     this.setState(state);
   }
 
@@ -160,6 +157,11 @@ class Songsim extends Component {
     // link shared from someone), the text should be immutable, and if 
     // url=custom, it's mutable. 
   }
+
+  updateLyrics = (lyrics) => {
+    this.setState({ verse: new CustomVerse(lyrics) });
+  }
+  
 
   /** Only used to generate SVGs for gallery. Super hacky. **/
   batchExportSVGs = (max) => {
@@ -381,7 +383,7 @@ class Songsim extends Component {
     );
     
     var lyrics;
-    if (this.state.verse && (this.state.verse.isBlank() || this.state.editing)) {
+    if (this.state.verse && (this.state.editing)) {
       lyrics = (
           <LyricsEditor
             verse={this.state.verse}
@@ -409,6 +411,7 @@ class Songsim extends Component {
                 onEdit={this.onEditButton}
                 onChange={this.onTextChange}
                 onStateChange={this.stateChanger}
+                updateLyrics={this.updateLyrics} // Add this line
               />
               {lyrics}
           </div>
