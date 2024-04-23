@@ -170,6 +170,7 @@ def cal_entropy_and_plot(dict_list, sorted_lyricist_count, n_author):
     # Plot a Horizontal Bar Plot
     y = list(sorted_entropy_dict.keys())[0:n_author]
     x = list(sorted_entropy_dict.values())[0:n_author]
+    fig = plt.figure(figsize = (15, 7))
     plt.barh(y, x)
     plt.xlabel('Entropy')
     plt.ylabel('Lyricist')
@@ -190,6 +191,7 @@ def plot_histogram(singer_name, num_rhymes = 20):
     sorted_data = sorted(singer_dict.items(), key = lambda key_val: key_val[1], reverse= True)[0:num_rhymes]
     y = [i[1] for i in sorted_data]
     x = [i[0] for i in sorted_data]
+    fig = plt.figure(figsize = (15, 7))
     plt.barh(x, y)
     plt.xlabel('Count')
     plt.ylabel('Rhyme Schemes')
@@ -209,9 +211,3 @@ plot_histogram('Kazi Nazrul Islam', num_rhymes)
 plot_histogram('Fokir Lalon Shai', num_rhymes)
 
 plot_histogram('Zia', num_rhymes)
-
-
-
-
-
-
