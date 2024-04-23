@@ -12,7 +12,7 @@ import scipy
 from bnlp import BengaliCorpus as corpus
 
 
-filepath = './SongDB.json'
+filepath = '../../Dataset/SongDB.json'
 
 # To Plot the Vertical Bar Chart of Lyricist as well as Rhyme Scheme
 n_top_rhymes = 6
@@ -141,6 +141,8 @@ plt.xticks([r + (bar_width) for r in range(n_top_rhymes)],
         list(sorted_unique_key_sums.keys())[:n_top_rhymes])
 plt.title('Use of Top Most Rhyme Scheme amongst Top Most Authors')
 plt.legend()
+plt.savefig('Plot3.png', bbox_inches='tight')  # Save plot as PNG
+
 plt.show()
         
 """
@@ -172,6 +174,8 @@ def cal_entropy_and_plot(dict_list, sorted_lyricist_count, n_author):
     plt.xlabel('Entropy')
     plt.ylabel('Lyricist')
     plt.title('Comparing Entropy of lyricist')
+    plt.savefig('Plot2.png', bbox_inches='tight')  # Save plot as PNG
+
     plt.show()
     return None
 
@@ -190,6 +194,7 @@ def plot_histogram(singer_name, num_rhymes = 20):
     plt.xlabel('Count')
     plt.ylabel('Rhyme Schemes')
     plt.title('Rhyme Scheme Distribution of {}'.format(singer_name))
+    plt.savefig(f'Plot1{singer_name}.png', bbox_inches='tight')  # Save plot as PNG
     plt.show()
 
     return None

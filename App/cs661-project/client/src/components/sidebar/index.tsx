@@ -4,7 +4,7 @@ import {
   LayoutDashboard,
   CircleUserRound,
   Settings,
-  WalletCards,
+  GitGraph,
   BadgePercent
 } from "lucide-react";
 import SidebarItem from "./item";
@@ -33,9 +33,9 @@ const items: ISidebarItem[] = [
     icon: BadgePercent,
   },
   {
-    name: "Payment",
-    path: "/payment",
-    icon: WalletCards,
+    name: "Topic modelling",
+    path: "/topicmodelling",
+    icon: GitGraph,
   },
   {
     name: "Accounts",
