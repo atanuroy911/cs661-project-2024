@@ -5,6 +5,7 @@ import json
 from flask_cors import CORS, cross_origin
 import os
 from rhymeanalysis.pattern import calculate_entropy, top_author, author_histogram
+from pos.pos import run_func
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -125,6 +126,26 @@ def author_hist():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/artistsimilarity', methods=['GET'])
+def serve_artist_similarity():
+    try:
+        file_path = os.path.join('static', 'ArtistSimilarity.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/pos', methods=['GET'])
+@cross_origin()
+def call_pos():
+    try:
+        author = request.args.get('author')  # Get the singer name from the query parameters
+        result = ''
+        result = run_func(author)
+        return send_file(result, mimetype='image/png')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
 
 if __name__ == '__main__':
     app.run(debug=True)

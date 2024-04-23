@@ -3,9 +3,10 @@ import {
   LucideIcon,
   LayoutDashboard,
   AudioWaveform,
-  Settings,
+  ScatterChart,
   GitGraph,
-  BadgePercent
+  BadgePercent,
+  PieChart
 } from "lucide-react";
 import SidebarItem from "./item";
 
@@ -43,24 +44,34 @@ const items: ISidebarItem[] = [
     icon: AudioWaveform,
   },
   {
-    name: "Settings",
-    path: "/settings",
-    icon: Settings,
-    items: [
-      {
-        name: "General",
-        path: "/settings",
-      },
-      {
-        name: "Security",
-        path: "/settings/security",
-      },
-      {
-        name: "Notifications",
-        path: "/settings/notifications",
-      },
-    ],
+    name: "Artist Similarity",
+    path: "/artistsimilarity",
+    icon: ScatterChart,
   },
+  {
+    name: "POS Analysis",
+    path: "/posanalysis",
+    icon: PieChart,
+  },
+  // {
+  //   name: "Settings",
+  //   path: "/settings",
+  //   icon: Settings,
+  //   items: [
+  //     {
+  //       name: "General",
+  //       path: "/settings",
+  //     },
+  //     {
+  //       name: "Security",
+  //       path: "/settings/security",
+  //     },
+  //     {
+  //       name: "Notifications",
+  //       path: "/settings/notifications",
+  //     },
+  //   ],
+  // },
 ];
 
 const Sidebar = () => {

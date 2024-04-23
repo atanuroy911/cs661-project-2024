@@ -40,15 +40,17 @@ export default function TopicModelling() {
 
   return (
     <div>
+      <h1 className="text-3xl font-bold mb-4">Rhyme Analysis</h1>
       <div className="flex">
         <div className="mr-4">
-          <label htmlFor="folderSelect">Select Folder:</label>
+          <label htmlFor="folderSelect">Select Author:</label>
           <select
             id="folderSelect"
             onChange={(e) => handleFolderSelect(e.target.value)}
             value={selectedFolder}
+            className='block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md'
           >
-            <option value="">Select Folder</option>
+            <option value="">Select Representation</option>
             {folders.map((folder, index) => (
               <option key={index} value={folder}>
                 {folder}
@@ -57,18 +59,33 @@ export default function TopicModelling() {
           </select>
         </div>
         <div>
-          <label htmlFor="fileSelect">Select File:</label>
+          <label htmlFor="fileSelect">Select Representation:</label>
           <select
             id="fileSelect"
             onChange={(e) => handleFileSelect(e.target.value)}
             value={selectedFile}
+            className='block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md'
           >
-            <option value="">Select File</option>
-            {files.map((file, index) => (
-              <option key={index} value={file}>
-                {file}
-              </option>
-            ))}
+            <option value="">Select Representation</option>
+            {files.map((file, index) => {
+              let displayName = file;
+              if (file.includes('TOPICS')) {
+                displayName = 'Visualize Topic';
+              } else if (file.includes('DOC')) {
+                displayName = 'Visualize Document';
+              }
+              else if (file.includes('MAP')){
+                displayName = '2-D Doc Map';
+              }
+              else if (file.includes('BC')){
+                displayName = 'Bar Chart for Topic Words';
+              }
+              return (
+                <option key={index} value={file}>
+                  {displayName}
+                </option>
+              );
+            })}
           </select>
         </div>
       </div>
