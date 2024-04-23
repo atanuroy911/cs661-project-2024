@@ -3,6 +3,7 @@ from bnwordcloud.bn_wordcloud import main
 from flask import jsonify
 import json
 from flask_cors import CORS, cross_origin
+import os
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -60,6 +61,31 @@ def send_lyrics():
         return jsonify({"error": "Song not found for the provided author"}), 404
     else:
         return jsonify({"error": "Author not found"}), 404
+    
+    
+@app.route('/folders', methods=['GET'])
+def get_folders():
+    try:
+        folders = [folder for folder in os.listdir('public') if os.path.isdir(os.path.join('public', folder))]
+        return jsonify(folders)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/files/<folder_name>/<file_name>')
+def get_file(folder_name, file_name):
+    try:
+        file_path = os.path.join('public', folder_name, file_name)
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/files/<folder_name>', methods=['GET'])
+def get_files(folder_name):
+    try:
+        files = [file for file in os.listdir(os.path.join('public', folder_name)) if os.path.isfile(os.path.join('public', folder_name, file))]
+        return jsonify(files)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
