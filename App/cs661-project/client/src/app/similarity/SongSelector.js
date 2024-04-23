@@ -13,15 +13,17 @@ const SongSelector = ({ updateLyrics }) => {
       try {
         const response = await axios.get(`http://127.0.0.1:5000/lyrics?author=${selectedAuthor}&song=${selectedSong}`);
         setLyrics(response.data);
-        console.log(lyrics?.lyrics);
-        if (lyrics) {
-        }
+        // console.log(lyrics?.lyrics);
+        
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData().then(() => {
+      if (!lyrics){
+        fetchData()
+      }
       updateLyrics(lyrics?.lyrics);
 
     });
