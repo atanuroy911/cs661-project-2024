@@ -2,7 +2,7 @@
 import {
   LucideIcon,
   LayoutDashboard,
-  CircleUserRound,
+  AudioWaveform,
   Settings,
   GitGraph,
   BadgePercent
@@ -38,9 +38,9 @@ const items: ISidebarItem[] = [
     icon: GitGraph,
   },
   {
-    name: "Accounts",
-    path: "/accounts",
-    icon: CircleUserRound,
+    name: "Rhyme Analysis",
+    path: "/rhyme",
+    icon: AudioWaveform,
   },
   {
     name: "Settings",

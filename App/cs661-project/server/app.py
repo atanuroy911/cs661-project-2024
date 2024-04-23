@@ -4,6 +4,7 @@ from flask import jsonify
 import json
 from flask_cors import CORS, cross_origin
 import os
+from rhymeanalysis.pattern import calculate_entropy, top_author, author_histogram
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -86,6 +87,44 @@ def get_files(folder_name):
         return jsonify(files)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+@app.route('/rhymepattern', methods=['GET'])
+@cross_origin()
+def rhyme_pattern():
+    n_author = request.args.get('author_num')  # Get the singer name from the query parameters
+    if not n_author:
+        return "Error: Author Number is required.", 400
+    try:
+        result = ''
+        result = calculate_entropy(n_author)
+        return send_file(result, mimetype='image/png')
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/topauthor', methods=['GET'])
+@cross_origin()
+def call_top_author():
+    try:
+        result = ''
+        result = top_author()
+        return send_file(result, mimetype='image/png')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/authorhist', methods=['GET'])
+@cross_origin()
+def author_hist():
+    author = request.args.get('author')  # Get the singer name from the query parameters
+    num_rhymes = request.args.get('num_rhymes')  # Get the singer name from the query parameters
+    try:
+        result = ''
+        result = author_histogram(author, int(num_rhymes))
+        return send_file(result, mimetype='image/png')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

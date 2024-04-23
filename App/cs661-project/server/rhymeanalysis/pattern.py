@@ -12,7 +12,7 @@ import scipy
 from bnlp import BengaliCorpus as corpus
 
 
-filepath = '../../Dataset/SongDB.json'
+filepath = 'SongDB.json'
 
 # To Plot the Vertical Bar Chart of Lyricist as well as Rhyme Scheme
 n_top_rhymes = 6
@@ -88,8 +88,8 @@ for singer in list(data.keys()):
 		lyrics = song['Lyrics']
 		if len(lyrics) != 0:
 			cleaned_lyrics = clean(lyrics)
-			print(song)
-			print(singer)
+			# print(song)
+			# print(singer)
 			singer_dict = form_rhyme_dict(cleaned_lyrics, singer_dict)
 	dict_list[singer] = singer_dict
 
@@ -120,28 +120,31 @@ sorted_unique_key_sums = dict(sorted(key_sums.items(), key = lambda key_val: key
 
 
 
-fig = plt.figure(figsize = (15, 7))
-color_list = ['r', 'g', 'b', 'c', 'm', 'y']
-bar_width = 0.10
-x = np.arange(n_top_rhymes)
-for i in range(0, n_top_singers):
-    singer_name = list(sorted_lyricist_count.items())[i][0]
-    singer_dict = dict_list[singer_name]
-    total_lyrics = sum(list(singer_dict.values()))
-    values = []
-    for j in list(sorted_unique_key_sums.keys())[0:n_top_rhymes]:
-        values.append(singer_dict[j] / total_lyrics)
-    x = [y + bar_width for y in x]
-    plt.bar(x , values, color = color_list[i-2], width = bar_width, label = singer_name, edgecolor ='grey')
-plt.xlabel('Rhyme Scheme')
-plt.ylabel('Count')
-plt.xticks([r + (bar_width) for r in range(n_top_rhymes)], 
-        list(sorted_unique_key_sums.keys())[:n_top_rhymes])
-plt.title('Use of Top Most Rhyme Scheme amongst Top Most Authors')
-plt.legend()
-plt.savefig('Plot3.png', bbox_inches='tight')  # Save plot as PNG
+def top_author():
+    fig = plt.figure(figsize = (15, 7))
+    color_list = ['r', 'g', 'b', 'c', 'm', 'y']
+    bar_width = 0.10
+    x = np.arange(n_top_rhymes)
+    for i in range(0, n_top_singers):
+        singer_name = list(sorted_lyricist_count.items())[i][0]
+        singer_dict = dict_list[singer_name]
+        total_lyrics = sum(list(singer_dict.values()))
+        values = []
+        for j in list(sorted_unique_key_sums.keys())[0:n_top_rhymes]:
+            values.append(singer_dict[j] / total_lyrics)
+        x = [y + bar_width for y in x]
+        plt.bar(x , values, color = color_list[i-2], width = bar_width, label = singer_name, edgecolor ='grey')
+    plt.xlabel('Rhyme Scheme')
+    plt.ylabel('Count')
+    plt.xticks([r + (bar_width) for r in range(n_top_rhymes)], 
+            list(sorted_unique_key_sums.keys())[:n_top_rhymes])
+    plt.title('Use of Top Most Rhyme Scheme amongst Top Most Authors')
+    plt.legend()
+    plt.savefig('./generated/Plot3.png', bbox_inches='tight')  # Save plot as PNG
 
-plt.show()
+    plt.show()
+    
+    return './generated/Plot3.png'
         
 """
  As we have very skewed distributed of songs across, we have normalized the counts of rhymes across each author. Here we can see that the rhymes 'A' is most used.
@@ -173,14 +176,10 @@ def cal_entropy_and_plot(dict_list, sorted_lyricist_count, n_author):
     plt.xlabel('Entropy')
     plt.ylabel('Lyricist')
     plt.title('Comparing Entropy of lyricist')
-    plt.savefig('Plot2.png', bbox_inches='tight')  # Save plot as PNG
+    plt.savefig('./generated/Plot2.png', bbox_inches='tight')  # Save plot as PNG
 
     plt.show()
-    return None
-
-
-cal_entropy_and_plot(dict_list, sorted_lyricist_count, n_author)
-
+    return './generated/Plot2.png'
 
 
 # Plot Histogram of Lyrics by Rabindranath Tagore
@@ -194,18 +193,26 @@ def plot_histogram(singer_name, num_rhymes = 20):
     plt.xlabel('Count')
     plt.ylabel('Rhyme Schemes')
     plt.title('Rhyme Scheme Distribution of {}'.format(singer_name))
-    plt.savefig(f'Plot1{singer_name}.png', bbox_inches='tight')  # Save plot as PNG
+    plt.savefig(f'./generated/Plot1{singer_name}.png', bbox_inches='tight')  # Save plot as PNG
     plt.show()
 
-    return None
+    return (f'./generated/Plot1{singer_name}.png')
+
+def calculate_entropy(n_author):
+    # print(n_author)
+    return cal_entropy_and_plot(dict_list, sorted_lyricist_count, int(n_author))
+
+def author_histogram(author, num_rhymes):
+    print(author, num_rhymes)
+    return plot_histogram(author, num_rhymes)
+
+# plot_histogram('Rabindra Nath Tagore', num_rhymes)
 
 
+# plot_histogram('Kazi Nazrul Islam', num_rhymes)
 
-plot_histogram('Rabindra Nath Tagore', num_rhymes)
+# plot_histogram('Fokir Lalon Shai', num_rhymes)
 
+# plot_histogram('Zia', num_rhymes)
 
-plot_histogram('Kazi Nazrul Islam', num_rhymes)
-
-plot_histogram('Fokir Lalon Shai', num_rhymes)
-
-plot_histogram('Zia', num_rhymes)
+# top_author()
