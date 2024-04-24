@@ -39,18 +39,18 @@ export default function POSAnalysis() {
   return (
     <div>
       <div>
-        <h1 className="text-3xl font-bold mb-4">Parts of Speech Repesentation per Author</h1>
+        <h1 className="text-3xl font-bold mb-4 text-center">Parts of Speech Repesentation per Lyricist</h1>
         <br />
         <hr />
         <div className="mt-4 flex items-center space-x-2 justify-center">
-          <label htmlFor="authorSelect">Select Author:</label>
+          <label htmlFor="authorSelect">Select Lyricist:</label>
           <select
             id="authorSelect"
             value={selectedAuthor}
             onChange={(e) => setSelectedAuthor(e.target.value)}
             className="border border-gray-400 px-2 py-1 rounded text-center"
           >
-            <option value="">Select an author</option>
+            <option value="">Select Lyricist</option>
             {data &&
               Object.keys(data).map((author) => (
                 <option key={author} value={author}>

@@ -83,14 +83,14 @@ const RhymeAnalysis = () => {
               }`}
             onClick={() => handleTabChange('topauthor')}
           >
-            Top Author Rhymes
+            Top Lyricist Rhymes
           </button>
           <button
             className={`mr-2 py-2 px-4 ${selectedTab === 'authorhist' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
               }`}
             onClick={() => handleTabChange('authorhist')}
           >
-            Author Histogram
+            Lyricist Histogram
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ const RhymeAnalysis = () => {
       {selectedTab === 'entropy' && (
         <div>
           <div className="mt-4 flex items-center space-x-2">
-            <label htmlFor="authorNumInput">Number of Authors:</label>
+            <label htmlFor="authorNumInput">Number of Lyricist:</label>
             <input
               id="authorNumInput"
               type="number"
@@ -114,7 +114,7 @@ const RhymeAnalysis = () => {
       {selectedTab === 'topauthor' && (
         <div className='flex justify-center content-center w-full'>
           {/* Placeholder for Top Author Rhymes */}
-          <p>Top Author Rhymes section</p>
+          <p>Top Lyricist Rhymes section</p>
           <br />
           <button onClick={handleGenerate} className="ml-3 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Show</button>
         </div>
@@ -123,14 +123,14 @@ const RhymeAnalysis = () => {
       {selectedTab === 'authorhist' && (
         <div>
           <div className="mt-4 flex items-center space-x-2">
-            <label htmlFor="authorSelect">Select Author:</label>
+            <label htmlFor="authorSelect">Select Lyricist:</label>
             <select
               id="authorSelect"
               value={selectedAuthor}
               onChange={(e) => setSelectedAuthor(e.target.value)}
               className="border border-gray-400 px-2 py-1 rounded"
             >
-              <option value="">Select an author</option>
+              <option value="">Select a lyricist</option>
               {data &&
                 Object.keys(data).map((author) => (
                   <option key={author} value={author}>

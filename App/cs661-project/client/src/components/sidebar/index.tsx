@@ -37,6 +37,16 @@ const items: ISidebarItem[] = [
     name: "Topic modelling",
     path: "/topicmodelling",
     icon: GitGraph,
+    items: [
+          {
+            name: "General",
+            path: "/topicmodelling",
+          },
+          {
+            name: "All Topics",
+            path: "/topicmodelling/all",
+          },
+        ],
   },
   {
     name: "Rhyme Analysis",
@@ -44,8 +54,8 @@ const items: ISidebarItem[] = [
     icon: AudioWaveform,
   },
   {
-    name: "Artist Similarity",
-    path: "/artistsimilarity",
+    name: "Lyricist Similarity",
+    path: "/lyricistsimilarity",
     icon: ScatterChart,
   },
   {

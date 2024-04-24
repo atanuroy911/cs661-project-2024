@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network Graph</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f7f7;
+        }
+        svg {
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+        .links line {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+        .nodes circle {
+            stroke: #000;
+            stroke-width: 1px;
+            fill: #555;
+            cursor: pointer;
+        }
+        .node-label {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .node-legend {
+            cursor: pointer;
+            padding: 2px;
+            user-select: none;
+            margin-top: 5px;
+        }
+        #legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: white;
+        }
+        #threshold-control {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div id="legend"></div>
+    <div id="threshold-control">
+        Threshold: <input type="range" id="threshold" min="0" max="1" step="0.01" value="0.5"> <span id="threshold-value">0.5</span>
+    </div>
+    <svg></svg>
+    <script>
+        const width = window.innerWidth * 0.8;
+        const height = window.innerHeight * 0.8;
+
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const legendDiv = d3.select("#legend");
+        const thresholdValue = d3.select("#threshold-value");
+
+        d3.json("/graph_data").then(function(graph) {
+            const nodes = graph.nodes;
+            const links = graph.links;
+
+            const linkElements = svg.append("g")
+                .attr("class", "links")
+                .selectAll("line")
+                .data(links)
+                .enter()
+                .append("line");
+
+            const nodeElements = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll("g")
+                .data(nodes)
+                .enter()
+                .append("g");
+
+            const circles = nodeElements
+                .append("circle")
+                .attr("r", 10)
+                .call(d3.drag()
+                    .on("start", dragStarted)
+                    .on("drag", dragged)
+                    .on("end", dragEnded));
+
+            const labels = nodeElements
+                .append("text")
+                .attr("class", "node-label")
+                .attr("dx", 12)
+                .attr("dy", ".35em")
+                .text(d => d.id);
+
+            // Create legend entries for each node
+            const legendEntries = legendDiv.selectAll(".node-legend")
+                .data(nodes)
+                .enter()
+                .append("div")
+                .attr("class", "node-legend")
+                .text(d => `Node ${d.id}`)
+                .on("click", toggleNode);
+
+            // Set initial visibility for all nodes and links
+            nodeElements.style("opacity", 1);
+            linkElements.style("opacity", 1);
+
+            // Call updateEdgeAppearances initially
+            updateEdgeAppearances();
+
+            // Add event listener for slider value change
+            d3.select("#threshold").on("input", function() {
+                updateEdgeAppearances();
+                thresholdValue.text(this.value);
+            });
+
+            function toggleNode(event, d) {
+                const isActive = !d3.select(this).classed("active");
+                d3.select(this).classed("active", isActive);
+
+                const nodeOpacity = isActive ? 1 : 0;
+                nodeElements.filter(n => n.id === d.id).style("opacity", nodeOpacity);
+
+                linkElements.style("opacity", function(l) {
+                    const sourceVisible = isNodeVisible(l.source.id);
+                    const targetVisible = isNodeVisible(l.target.id);
+                    return (sourceVisible && targetVisible) ? 1 : 0;
+                });
+            }
+
+            function isNodeVisible(nodeId) {
+                const node = nodeElements.filter(n => n.id === nodeId);
+                return node.style("opacity") === "1";
+            }
+
+            function dragStarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragEnded(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            const simulation = d3.forceSimulation()
+                .force("link", d3.forceLink().id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody())
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            simulation
+                .nodes(nodes)
+                .on("tick", ticked);
+
+            simulation.force("link")
+                .links(links);
+
+            function ticked() {
+                linkElements
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                nodeElements
+                    .attr("transform", d => `translate(${d.x}, ${d.y})`);
+            }
+
+            function updateEdgeAppearances() {
+                const threshold = parseFloat(d3.select("#threshold").property("value"));
+
+                linkElements
+                    .style("stroke-width", function(d) {
+                        const weight = d.value;
+                        if (weight > threshold) {
+                            return 2; // Bolder stroke for edges above threshold
+                        } else {
+                            return 1; // Thinner stroke for edges below threshold
+                        }
+                    })
+                    .style("stroke-opacity", function(d) {
+                        const weight = d.value;
+                        if (weight > threshold) {
+                            return 1; // Fully opaque for edges above threshold
+                        } else {
+                            return 0.3; // Semi-transparent for edges below threshold
+                        }
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

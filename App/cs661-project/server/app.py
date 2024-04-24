@@ -1,7 +1,8 @@
-from flask import Flask, request, send_file
+from flask import Flask, render_template, request, send_file
 from bnwordcloud.bn_wordcloud import main
 from flask import jsonify
 import json
+import networkx as nx
 from flask_cors import CORS, cross_origin
 import os
 from rhymeanalysis.pattern import calculate_entropy, top_author, author_histogram
@@ -10,6 +11,24 @@ from pos.pos import run_func
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+# Create a graph and add some nodes and edges
+G = nx.fast_gnp_random_graph(n=10, p=0.2, seed=42)
+
+# Use a layout algorithm to position the nodes
+pos = nx.spring_layout(G, seed=42)
+
+# Rescale positions to fit the SVG canvas
+max_pos = max(max(x, y) for x, y in pos.values())
+pos = {node: ((x / max_pos * 0.8 + 0.1) * 960, (y / max_pos * 0.8 + 0.1) * 600)
+       for node, (x, y) in pos.items()}
+
+# Prepare the data for D3.js
+data = {
+    'nodes': [{'id': str(node), 'group': 1, 'x': p[0], 'y': p[1]} for node, p in pos.items()],
+    'links': [{'source': str(u), 'target': str(v), 'value': 1} for u, v in G.edges()]
+}
 
 @app.route('/generate_wordcloud', methods=['GET'])
 @cross_origin()
@@ -144,6 +163,15 @@ def call_pos():
         return send_file(result, mimetype='image/png')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+@app.route('/graph_data')
+def graph_data():
+    return jsonify(data)
+
+@app.route('/networkx')
+def index():
+    return render_template('index.html')
     
 
 

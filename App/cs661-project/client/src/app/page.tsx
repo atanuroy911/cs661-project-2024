@@ -52,14 +52,14 @@ const DashboardPage = () => {
               }`}
             onClick={() => handleTabChange('author')}
           >
-            Just Author
+            Just Lyricist
           </button>
           <button
             className={`py-2 px-4 ${selectedTab === 'author_song' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
               }`}
             onClick={() => handleTabChange('author_song')}
           >
-            Author & Song
+            Lyricist & Song
           </button>
         </div>
       </div>
