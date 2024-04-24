@@ -30,6 +30,17 @@ data = {
     'links': [{'source': str(u), 'target': str(v), 'value': 1} for u, v in G.edges()]
 }
 
+
+# Load JSON files
+def load_json_data(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+graph_data_1 = load_json_data('./static/k_1.json')
+graph_data_2 = load_json_data('./static/k_3.json')
+graph_data_3 = load_json_data('./static/k_5.json')
+graph_data_4 = load_json_data('./static/k_7.json')
+
 @app.route('/generate_wordcloud', methods=['GET'])
 @cross_origin()
 def generate_word_cloud():
@@ -145,13 +156,47 @@ def author_hist():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-@app.route('/artistsimilarity', methods=['GET'])
-def serve_artist_similarity():
+@app.route('/artistsimilarity1', methods=['GET'])
+def serve_artist_similarity1():
     try:
-        file_path = os.path.join('static', 'ArtistSimilarity.html')
+        file_path = os.path.join('static', 'artist_similarity_1.html')
         return send_file(file_path)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/artistsimilarity3', methods=['GET'])
+def serve_artist_similarity3():
+    try:
+        file_path = os.path.join('static', 'artist_similarity_3.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/artistsimilarity5', methods=['GET'])
+def serve_artist_similarity5():
+    try:
+        file_path = os.path.join('static', 'artist_similarity_5.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/artistsimilarity7', methods=['GET'])
+def serve_artist_similarity7():
+    try:
+        file_path = os.path.join('static', 'artist_similarity_7.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/artistsimilarity9', methods=['GET'])
+def serve_artist_similarity9():
+    try:
+        file_path = os.path.join('static', 'artist_similarity_9.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
     
 @app.route('/pos', methods=['GET'])
 @cross_origin()
@@ -168,6 +213,22 @@ def call_pos():
 @app.route('/graph_data')
 def graph_data():
     return jsonify(data)
+
+@app.route('/graph_data/1')
+def graph_data1():
+    return jsonify(graph_data_1)
+
+@app.route('/graph_data/2')
+def graph_data2():
+    return jsonify(graph_data_2)
+
+@app.route('/graph_data/3')
+def graph_data3():
+    return jsonify(graph_data_3)
+
+@app.route('/graph_data/4')
+def graph_data4():
+    return jsonify(graph_data_4)
 
 @app.route('/networkx')
 def index():

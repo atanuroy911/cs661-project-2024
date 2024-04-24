@@ -45,20 +45,15 @@
             padding: 10px;
             background: white;
         }
-        #threshold-control {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            padding: 10px;
-            background: white;
-            border: 1px solid #ddd;
-        }
     </style>
 </head>
 <body>
     <div id="legend"></div>
-    <div id="threshold-control">
-        Threshold: <input type="range" id="threshold" min="0" max="1" step="0.01" value="0.5"> <span id="threshold-value">0.5</span>
+    <div id="data-selector">
+        <button onclick="loadGraphData(1)">Graph 1</button>
+        <button onclick="loadGraphData(2)">Graph 2</button>
+        <button onclick="loadGraphData(3)">Graph 3</button>
+        <button onclick="loadGraphData(4)">Graph 4</button>
     </div>
     <svg></svg>
     <script>
@@ -70,144 +65,166 @@
             .attr("height", height);
 
         const legendDiv = d3.select("#legend");
-        const thresholdValue = d3.select("#threshold-value");
 
-        d3.json("/graph_data").then(function(graph) {
-            const nodes = graph.nodes;
-            const links = graph.links;
+        const names = [
+        'Rabindra Nath Tagore', 'Raihan Sharif', 'Rajani Kanto Sen', 'Rajib Ahmed', 
+        'Rana Sheikh', 'Rifat Alom', 'Robiul Islam Jibon', 'Rongu Shahabuddin', 
+        'Ronjon', 'Roton Shaha', 'Rudro Mohammad Shohidullah', 'Rupchad Pokki', 
+        'Sahana', 'Sayem', 'Sayyed Shamsul Haque', 'Sejan Mahmud', 'Shafiq Tuhin', 
+        'Shah Abdul Karim', 'Shahan Kobondo', 'Shahinur Islam'
+    ];
 
-            const linkElements = svg.append("g")
-                .attr("class", "links")
-                .selectAll("line")
-                .data(links)
-                .enter()
-                .append("line");
+        function loadGraphData(graphNumber) {
+            d3.json(`/graph_data/${graphNumber}`).then(function(graph) {
 
-            const nodeElements = svg.append("g")
-                .attr("class", "nodes")
-                .selectAll("g")
-                .data(nodes)
-                .enter()
-                .append("g");
+                svg.selectAll("*").remove();
+                const nodes = graph.nodes;
+                const links = graph.links;
 
-            const circles = nodeElements
-                .append("circle")
-                .attr("r", 10)
-                .call(d3.drag()
-                    .on("start", dragStarted)
-                    .on("drag", dragged)
-                    .on("end", dragEnded));
+                // Calculate the minimum possible threshold (mean weight)
+                const edgeWeights = links.map(d => d.value);
+                const minThreshold = d3.mean(edgeWeights);
 
-            const labels = nodeElements
-                .append("text")
-                .attr("class", "node-label")
-                .attr("dx", 12)
-                .attr("dy", ".35em")
-                .text(d => d.id);
+                // Calculate quantiles for edge weight thresholds
+                const quantiles = d3.quantileSorted(edgeWeights, [0.5, 0.8, 1]);
+                const veryLightThreshold = quantiles[0];
+                const lightThreshold = quantiles[1];
+                const mediumThreshold = quantiles[2];
 
-            // Create legend entries for each node
-            const legendEntries = legendDiv.selectAll(".node-legend")
-                .data(nodes)
-                .enter()
-                .append("div")
-                .attr("class", "node-legend")
-                .text(d => `Node ${d.id}`)
-                .on("click", toggleNode);
+                // Filter out links with weights below the minimum threshold
+                const filteredLinks = links.filter(d => d.value >= minThreshold);
 
-            // Set initial visibility for all nodes and links
-            nodeElements.style("opacity", 1);
-            linkElements.style("opacity", 1);
+                const linkElements = svg.append("g")
+                    .attr("class", "links")
+                    .selectAll("line")
+                    .data(filteredLinks)
+                    .enter()
+                    .append("line");
 
-            // Call updateEdgeAppearances initially
-            updateEdgeAppearances();
+                const nodeElements = svg.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("g")
+                    .data(nodes)
+                    .enter()
+                    .append("g");
 
-            // Add event listener for slider value change
-            d3.select("#threshold").on("input", function() {
-                updateEdgeAppearances();
-                thresholdValue.text(this.value);
-            });
+                const circles = nodeElements
+                    .append("circle")
+                    .attr("r", 10)
+                    .call(d3.drag()
+                        .on("start", dragStarted)
+                        .on("drag", dragged)
+                        .on("end", dragEnded));
 
-            function toggleNode(event, d) {
-                const isActive = !d3.select(this).classed("active");
-                d3.select(this).classed("active", isActive);
+                const labels = nodeElements
+                    .append("text")
+                    .attr("class", "node-label")
+                    .attr("dx", 12)
+                    .attr("dy", ".35em")
+                    .text(d => d.id);
 
-                const nodeOpacity = isActive ? 1 : 0;
-                nodeElements.filter(n => n.id === d.id).style("opacity", nodeOpacity);
+                // Create legend entries for each node
+                const legendEntries = legendDiv.selectAll(".node-legend")
+                    .data(nodes)
+                    .enter()
+                    .append("div")
+                    .attr("class", "node-legend")
+                    .text((d, i) => names[i])
+                    .text(d => `Node ${d.id}`)
+                    .on("click", toggleNode);
 
-                linkElements.style("opacity", function(l) {
-                    const sourceVisible = isNodeVisible(l.source.id);
-                    const targetVisible = isNodeVisible(l.target.id);
-                    return (sourceVisible && targetVisible) ? 1 : 0;
-                });
-            }
+                // Set initial visibility for all nodes and links
+                nodeElements.style("opacity", 1);
+                linkElements.style("opacity", 1);
 
-            function isNodeVisible(nodeId) {
-                const node = nodeElements.filter(n => n.id === nodeId);
-                return node.style("opacity") === "1";
-            }
+                // Set edge appearances based on thresholds
+                updateEdgeAppearances(minThreshold, veryLightThreshold, lightThreshold, mediumThreshold);
 
-            function dragStarted(event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
+                function toggleNode(event, d) {
+                    const isActive = !d3.select(this).classed("active");
+                    d3.select(this).classed("active", isActive);
 
-            function dragged(event, d) {
-                d.fx = event.x;
-                d.fy = event.y;
-            }
+                    const nodeOpacity = isActive ? 1 : 0;
+                    nodeElements.filter(n => n.id === d.id).style("opacity", nodeOpacity);
 
-            function dragEnded(event, d) {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-            }
-
-            const simulation = d3.forceSimulation()
-                .force("link", d3.forceLink().id(d => d.id).distance(100))
-                .force("charge", d3.forceManyBody())
-                .force("center", d3.forceCenter(width / 2, height / 2));
-
-            simulation
-                .nodes(nodes)
-                .on("tick", ticked);
-
-            simulation.force("link")
-                .links(links);
-
-            function ticked() {
-                linkElements
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
-
-                nodeElements
-                    .attr("transform", d => `translate(${d.x}, ${d.y})`);
-            }
-
-            function updateEdgeAppearances() {
-                const threshold = parseFloat(d3.select("#threshold").property("value"));
-
-                linkElements
-                    .style("stroke-width", function(d) {
-                        const weight = d.value;
-                        if (weight > threshold) {
-                            return 2; // Bolder stroke for edges above threshold
-                        } else {
-                            return 1; // Thinner stroke for edges below threshold
-                        }
-                    })
-                    .style("stroke-opacity", function(d) {
-                        const weight = d.value;
-                        if (weight > threshold) {
-                            return 1; // Fully opaque for edges above threshold
-                        } else {
-                            return 0.3; // Semi-transparent for edges below threshold
-                        }
+                    linkElements.style("opacity", function(l) {
+                        const sourceVisible = isNodeVisible(l.source.id);
+                        const targetVisible = isNodeVisible(l.target.id);
+                        return (sourceVisible && targetVisible) ? 1 : 0;
                     });
-            }
-        });
+                }
+
+                function isNodeVisible(nodeId) {
+                    const node = nodeElements.filter(n => n.id === nodeId);
+                    return node.style("opacity") === "1";
+                }
+
+                function dragStarted(event, d) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+
+                function dragged(event, d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                }
+
+                function dragEnded(event, d) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+
+                const simulation = d3.forceSimulation()
+                    .force("link", d3.forceLink().id(d => d.id).distance(100))
+                    .force("charge", d3.forceManyBody())
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                simulation
+                    .nodes(nodes)
+                    .on("tick", ticked);
+
+                simulation.force("link")
+                    .links(filteredLinks);
+
+                function ticked() {
+                    linkElements
+                        .attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    nodeElements
+                        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+                }
+
+                function updateEdgeAppearances(minThreshold, veryLightThreshold, lightThreshold, mediumThreshold) {
+                    linkElements
+                        .style("stroke-width", function(d) {
+                            const weight = d.value;
+                            if (weight >= mediumThreshold) {
+                                return 3; // Boldest stroke for edges above medium threshold
+                            } else if (weight >= lightThreshold) {
+                                return 2; // Lighter stroke for edges between light and medium thresholds
+                            } else {
+                                return 1; // Lightest stroke for edges between very light and light thresholds
+                            }
+                        })
+                        .style("stroke-opacity", function(d) {
+                            const weight = d.value;
+                            if (weight >= mediumThreshold) {
+                                return 1; // Fully opaque for edges above medium threshold
+                            } else if (weight >= lightThreshold) {
+                                return 0.7; // Semi-opaque for edges between light and medium thresholds
+                            } else {
+                                return 0.4; // More transparent for edges between very light and light thresholds
+                            }
+                        });
+                }
+            });
+        }
+        loadGraphData(1);
     </script>
 </body>
 </html>
