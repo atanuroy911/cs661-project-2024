@@ -40,7 +40,7 @@ export default function TopicModelling() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Rhyme Analysis</h1>
+      <h1 className="text-3xl font-bold mb-4">Topic Modelling</h1>
       <div className="flex">
         <div className="mr-4">
           <label htmlFor="folderSelect">Select Author:</label>
