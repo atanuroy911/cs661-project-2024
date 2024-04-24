@@ -37,16 +37,16 @@ const items: ISidebarItem[] = [
     name: "Topic modelling",
     path: "/topicmodelling",
     icon: GitGraph,
-    items: [
-          {
-            name: "General",
-            path: "/topicmodelling",
-          },
-          {
-            name: "All Topics",
-            path: "/topicmodelling/all",
-          },
-        ],
+    // items: [
+    //       {
+    //         name: "General",
+    //         path: "/topicmodelling",
+    //       },
+    //       {
+    //         name: "All Topics",
+    //         path: "/topicmodelling/all",
+    //       },
+    //     ],
   },
   {
     name: "Rhyme Analysis",

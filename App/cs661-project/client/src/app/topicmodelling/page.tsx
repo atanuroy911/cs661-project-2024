@@ -42,17 +42,19 @@ export default function TopicModelling() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Topic Modelling</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center">Topic Modelling</h1>
+      <hr />
+      <br />
       <div className="flex">
         <div className="mr-4">
-          <label htmlFor="folderSelect">Select Author:</label>
+          <label htmlFor="folderSelect">Select Lyricist:</label>
           <select
             id="folderSelect"
             onChange={(e) => handleFolderSelect(e.target.value)}
             value={selectedFolder}
             className='block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md'
           >
-            <option value="">Select Representation</option>
+            <option value="">Select Lyricist</option>
             {folders.map((folder, index) => (
               <option key={index} value={folder}>
                 {folder}
@@ -61,14 +63,14 @@ export default function TopicModelling() {
           </select>
         </div>
         <div>
-          <label htmlFor="fileSelect">Select Representation:</label>
+          <label htmlFor="fileSelect">Select Visualization:</label>
           <select
             id="fileSelect"
             onChange={(e) => handleFileSelect(e.target.value)}
             value={selectedFile}
             className='block w-full py-2 px-4 mb-4 border border-gray-300 rounded-md'
           >
-            <option value="">Select Representation</option>
+            <option value="">Select Visualization</option>
             {files.map((file, index) => {
               let displayName = file;
               if (file.includes('TOPICS')) {
@@ -93,7 +95,6 @@ export default function TopicModelling() {
       </div>
       {selectedFile && (
         <>
-          <h2 className='text-xl text-center text-bold'>Preview</h2>
           <div className="mt-4 w-full flex justify-center">
             <iframe src={fileUrl} style={{ width: '100%', height: '600px' }} title="File Preview" />
           </div>

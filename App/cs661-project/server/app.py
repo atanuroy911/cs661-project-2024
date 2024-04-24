@@ -164,6 +164,14 @@ def serve_artist_similarity1():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/artistsimilarity', methods=['GET'])
+def serve_artist_similarity():
+    try:
+        file_path = os.path.join('static', 'ArtistSimilarity.html')
+        return send_file(file_path)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @app.route('/artistsimilarity3', methods=['GET'])
 def serve_artist_similarity3():
     try:

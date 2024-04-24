@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Network Graph</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             height: 100%;
             display: flex;
@@ -13,30 +16,36 @@
             align-items: center;
             background-color: #f7f7f7;
         }
+
         svg {
             border: 1px solid #ddd;
             background-color: #fff;
         }
+
         .links line {
             stroke: #999;
             stroke-opacity: 0.6;
         }
+
         .nodes circle {
             stroke: #000;
             stroke-width: 1px;
             fill: #555;
             cursor: pointer;
         }
+
         .node-label {
             font-size: 12px;
             font-weight: bold;
         }
+
         .node-legend {
             cursor: pointer;
             padding: 2px;
             user-select: none;
             margin-top: 5px;
         }
+
         #legend {
             position: absolute;
             top: 20px;
@@ -45,17 +54,28 @@
             padding: 10px;
             background: white;
         }
+
+        /* Add custom styles for active tab */
+        .active-tab {
+            background-color: #4a90e2;
+            /* Change to desired color */
+            color: white;
+        }
     </style>
 </head>
+
 <body>
     <div id="legend"></div>
-    <div id="data-selector">
-        <button onclick="loadGraphData(1)">Graph 1</button>
-        <button onclick="loadGraphData(2)">Graph 2</button>
-        <button onclick="loadGraphData(3)">Graph 3</button>
-        <button onclick="loadGraphData(4)">Graph 4</button>
+    <div class="flex flex-col">
+        <div id="data-selector" class="flex">
+            <!-- Add Tailwind CSS classes for tabs -->
+            <button onclick="loadGraphData(1)" class="tab-btn mx-2 bg-gray-200 text-gray-800 px-4 py-2">K = 1</button>
+            <button onclick="loadGraphData(2)" class="tab-btn mx-2 bg-gray-200 text-gray-800 px-4 py-2">K = 3</button>
+            <button onclick="loadGraphData(3)" class="tab-btn mx-2 bg-gray-200 text-gray-800 px-4 py-2">K = 5</button>
+            <button onclick="loadGraphData(4)" class="tab-btn mx-2 bg-gray-200 text-gray-800 px-4 py-2">K = 7</button>
+        </div>
+        <svg></svg>
     </div>
-    <svg></svg>
     <script>
         const width = window.innerWidth * 0.8;
         const height = window.innerHeight * 0.8;
@@ -67,15 +87,15 @@
         const legendDiv = d3.select("#legend");
 
         const names = [
-        'Rabindra Nath Tagore', 'Raihan Sharif', 'Rajani Kanto Sen', 'Rajib Ahmed', 
-        'Rana Sheikh', 'Rifat Alom', 'Robiul Islam Jibon', 'Rongu Shahabuddin', 
-        'Ronjon', 'Roton Shaha', 'Rudro Mohammad Shohidullah', 'Rupchad Pokki', 
-        'Sahana', 'Sayem', 'Sayyed Shamsul Haque', 'Sejan Mahmud', 'Shafiq Tuhin', 
-        'Shah Abdul Karim', 'Shahan Kobondo', 'Shahinur Islam'
-    ];
+            'Rabindra Nath Tagore', 'Raihan Sharif', 'Rajani Kanto Sen', 'Rajib Ahmed',
+            'Rana Sheikh', 'Rifat Alom', 'Robiul Islam Jibon', 'Rongu Shahabuddin',
+            'Ronjon', 'Roton Shaha', 'Rudro Mohammad Shohidullah', 'Rupchad Pokki',
+            'Sahana', 'Sayem', 'Sayyed Shamsul Haque', 'Sejan Mahmud', 'Shafiq Tuhin',
+            'Shah Abdul Karim', 'Shahan Kobondo', 'Shahinur Islam'
+        ];
 
         function loadGraphData(graphNumber) {
-            d3.json(`/graph_data/${graphNumber}`).then(function(graph) {
+            d3.json(`/graph_data/${graphNumber}`).then(function (graph) {
 
                 svg.selectAll("*").remove();
                 const nodes = graph.nodes;
@@ -121,17 +141,17 @@
                     .attr("class", "node-label")
                     .attr("dx", 12)
                     .attr("dy", ".35em")
-                    .text(d => d.id);
+                    .text(d => names[d.id - 1]); // Adjust the index to match the zero-based index of the array
 
-                // Create legend entries for each node
+
                 const legendEntries = legendDiv.selectAll(".node-legend")
                     .data(nodes)
                     .enter()
                     .append("div")
                     .attr("class", "node-legend")
-                    .text((d, i) => names[i])
-                    .text(d => `Node ${d.id}`)
+                    .text((d, i) => names[d.id - 1]) // Display artist names instead of "Node 1", "Node 2", etc.
                     .on("click", toggleNode);
+
 
                 // Set initial visibility for all nodes and links
                 nodeElements.style("opacity", 1);
@@ -147,7 +167,7 @@
                     const nodeOpacity = isActive ? 1 : 0;
                     nodeElements.filter(n => n.id === d.id).style("opacity", nodeOpacity);
 
-                    linkElements.style("opacity", function(l) {
+                    linkElements.style("opacity", function (l) {
                         const sourceVisible = isNodeVisible(l.source.id);
                         const targetVisible = isNodeVisible(l.target.id);
                         return (sourceVisible && targetVisible) ? 1 : 0;
@@ -177,8 +197,8 @@
                 }
 
                 const simulation = d3.forceSimulation()
-                    .force("link", d3.forceLink().id(d => d.id).distance(100))
-                    .force("charge", d3.forceManyBody())
+                    .force("link", d3.forceLink().id(d => d.id).distance(250))
+                    .force("charge", d3.forceManyBody().strength(-200))
                     .force("center", d3.forceCenter(width / 2, height / 2));
 
                 simulation
@@ -201,7 +221,7 @@
 
                 function updateEdgeAppearances(minThreshold, veryLightThreshold, lightThreshold, mediumThreshold) {
                     linkElements
-                        .style("stroke-width", function(d) {
+                        .style("stroke-width", function (d) {
                             const weight = d.value;
                             if (weight >= mediumThreshold) {
                                 return 3; // Boldest stroke for edges above medium threshold
@@ -211,7 +231,7 @@
                                 return 1; // Lightest stroke for edges between very light and light thresholds
                             }
                         })
-                        .style("stroke-opacity", function(d) {
+                        .style("stroke-opacity", function (d) {
                             const weight = d.value;
                             if (weight >= mediumThreshold) {
                                 return 1; // Fully opaque for edges above medium threshold
@@ -227,4 +247,5 @@
         loadGraphData(1);
     </script>
 </body>
+
 </html>
