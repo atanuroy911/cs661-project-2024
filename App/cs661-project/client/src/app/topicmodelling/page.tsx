@@ -22,7 +22,9 @@ export default function TopicModelling() {
   }, []);
 
   const handleFolderSelect = async (folderName) => {
+    
     setSelectedFolder(folderName);
+    setSelectedFile('')
     try {
       const response = await fetch(`http://127.0.0.1:5000/files/${folderName}`);
       const data = await response.json();

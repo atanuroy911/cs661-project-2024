@@ -389,6 +389,7 @@ class Songsim extends Component {
             verse={this.state.verse}
             onChange={this.onTextChange}
             onStateChange={this.stateChanger}
+            className='ml-2'
           />);
     } else {
       lyrics = (
@@ -401,22 +402,23 @@ class Songsim extends Component {
     }
     return (
       <div>
-        <div className="container-fluid mainContainer flex">
+        <div className="container-fluid mainContainer flex justify-between">
           <div className="matrixPane matrixdiv">
             {matrix}
           </div>
-          <div className="lyricsPane">
+          <div className="lyricsPane flex mx-auto">
               <SongSelector
                 selected={this.state.verse && this.state.verse.id}
                 onEdit={this.onEditButton}
                 onChange={this.onTextChange}
                 onStateChange={this.stateChanger}
                 updateLyrics={this.updateLyrics} // Add this line
+                className='mr-2'
               />
               {lyrics}
           </div>
         </div>
-        <div className="container">
+        <div className="container fixed bottom-3 text-blue-500">
           {toolbox}
         </div>
         {debug}
