@@ -1,23 +1,42 @@
-# cs661-project-2024
-Group 23
+# CS661 Project 2024 - Group 23
 
-## ALL INDIVIDUAL TASKS ARE INSIDE 'ITASKS' FOLDER
+## Introduction:
 
-## MAIN Web APP is in App Folder
+Welcome to the repository for our CS661 project developed by Group 23. 
 
+## Project Structure:
 
-## Instructions:
+### Individual Tasks:
+All individual tasks are organized inside the 'ITASKS' folder. Each team member's contributions can be found here.
 
-Go to App/cs*/client 
-Run npm install
-Run npm run dev
+### Main Web Application:
+The main web application files are located in the 'App' folder.
 
-Go to App/cs*/server
-Run pip install -r requirements.txt
-Run python3 app.py
+## Getting Started:
 
+To run the web application locally on your machine, follow these instructions:
 
+1. **Client Setup:**
+   - Navigate to `App/cs*/client` directory.
+   - Run `npm install` to install the required dependencies.
+   - Run `npm run dev` to start the development server.
 
+2. **Server Setup:**
+   - Navigate to `App/cs*/server` directory.
+   - Run `pip install -r requirements.txt` to install the necessary Python packages.
+   - Run `python3 app.py` to start the server.
 
+## Contributors:
 
+- Bhavya Gupta
+- Atanu Shuvam Roy, 
+- Aditya Kumar
+- Akarshan Saraf
+- Hammad Ansari
+- Subhajyoti Saha
+- Puru Pant
+
+## License:
+
+[MIT]
 
