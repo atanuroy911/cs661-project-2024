@@ -6,5 +6,18 @@ Group 23
 ## MAIN Web APP is in App Folder
 
 
+## Instructions:
+
+Go to App/cs*/client 
+Run npm install
+Run npm run dev
+
+Go to App/cs*/server
+Run pip install -r requirements.txt
+Run python3 app.py
+
+
+
+
 
 
